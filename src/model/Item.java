@@ -10,6 +10,7 @@ public class Item {
         this.name = name;
         this.price = price;
         this.date = date;
+        int ok = 0;
 
     }
 
