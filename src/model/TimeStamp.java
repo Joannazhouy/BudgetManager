@@ -24,4 +24,8 @@ public class TimeStamp {
         return this.year;
     }
 
+    public String timeStampToString(){
+        return Integer.toString(day) + "/" + Integer.toString(month) + "/" + Integer.toString(year);
+    }
+
 }
