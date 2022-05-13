@@ -35,7 +35,7 @@ public class Entry {
     }
 
     public String entryToString(){
-        return name + " " + "$" + Integer.toString(amount) + " " + date.timeStampToString() + "\r\n";
+        return name + " " + type.toString() + " " + "$" + Integer.toString(amount) + " " + date.timeStampToString() + "\r\n";
     }
 
 

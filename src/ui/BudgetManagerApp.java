@@ -1,26 +1,28 @@
 package ui;
+import model.Entries;
+
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 
-public class BudgetManagerApp {
-    public static void main(String[] args) {
-        Frame appFrame = new Frame("The Budget Manager");
-        appFrame.setSize(600,400);
-        appFrame.setBackground(new Color(115, 142, 126));
-        appFrame.setLocationRelativeTo(null);
-        appFrame.setVisible(true);
-        appFrame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
+public class BudgetManagerApp extends JFrame{
+    private Entries expense;
+    private Entries income;
 
+    public BudgetManagerApp(){
+        init();
+    }
 
+    public void init() {
+        this.setTitle("Buddy");
+        this.setSize(600, 400);
+        Container container = this.getContentPane();
+        container.setBackground(new Color(115,142,126));
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
 
 
     }
-}
+

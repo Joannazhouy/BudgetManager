@@ -6,6 +6,7 @@ import java.util.List;
 public class Entries {
 
     private List<Entry> data;
+    private int budget;
 
     public Entries(){
         data = new ArrayList<Entry>();
@@ -34,11 +35,27 @@ public class Entries {
 
     }
 
+    public void setBudget(int budget){
+        this.budget = budget;
+    }
 
+    public int calcTotalByCat(Categories type){
+        int total = 0;
+        for (Entry temp : data){
+            if (temp.getCat() == type) {
+                total += temp.getAmount();
+            }
+        }
+        return total;
+    }
 
-
-
-
+    public int calcTotal(){
+        int total = 0;
+        for (Entry entry : data){
+            total += entry.getAmount();
+        }
+        return total;
+    }
 
 
 }
