@@ -3,11 +3,11 @@ package model;
 public class Entry {
 
     private String name;
-    private int amount;
+    private double amount;
     private TimeStamp date;
     private Categories type;
 
-    public Entry(String name, int price, TimeStamp date, Categories type){
+    public Entry(String name, double price, TimeStamp date, Categories type){
         this.name = name;
         this.amount = price;
         this.date = date;
@@ -21,7 +21,7 @@ public class Entry {
         return this.name;
     }
 
-    public int getAmount(){
+    public double getAmount(){
         return this.amount;
 
     }
@@ -35,7 +35,7 @@ public class Entry {
     }
 
     public String entryToString(){
-        return name + " " + type.toString() + " " + "$" + Integer.toString(amount) + " " + date.timeStampToString() + "\r\n";
+        return name + " " + type.toString() + " " + "$" + Double.toString(amount) + " " + date.timeStampToString() + "\r\n";
     }
 
 
