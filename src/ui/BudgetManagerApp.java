@@ -1,32 +1,29 @@
 package ui;
+import model.Categories;
 import model.Entries;
+import model.Entry;
+import model.TimeStamp;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.RoundRectangle2D;
-import java.io.File;
 import java.net.URL;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import java.nio.BufferUnderflowException;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.plaf.basic.BasicBorders;
 
 
 public class BudgetManagerApp extends JFrame implements ActionListener {
     private Entries expense;
     private Entries income;
-    private int Budget = 0;
+    private double budget = 0.0;
 
     public static final int FRAME_WIDTH = 801;
     public static final int FRAME_HEIGHT = 500;
-    public static final int BUTTON_HEIGHT = 60;
+    public static final int BUTTON_HEIGHT = 50;
     public static final int BUTTON_WIDTH = 200;
     public static final int BUTTON_WIDTH_SMALL = 90;
 
-    Color bColor = new Color(115,142,126);
+    Color BCOLOR = new Color(115,142,126);
     Color buttonColor = new Color(239, 220, 195);
     JButton add = new JButton("Add A New Entry");
     JButton stat = new JButton("Statistics");
@@ -39,6 +36,21 @@ public class BudgetManagerApp extends JFrame implements ActionListener {
     JTextArea displayArea2 = new JTextArea();
     JScrollPane scrollPane1 = new JScrollPane();
     JScrollPane scrollPane2 = new JScrollPane();
+    JButton editBudget = new JButton("Edit");
+    JButton showAll = new JButton("Show All Entries");
+    JLabel opening = new JLabel("Opening Balance: $" + Double.toString(budget));
+    JLabel remaining = new JLabel("Remaining Balance: $0.0" );
+    JTextField expenseDel = new JTextField(20);
+    JTextField incomeDel = new JTextField(20);
+    JButton expenseDelB = new JButton("delete");
+    JButton incomeDelB = new JButton("delete");
+    JDialog addDialogue;
+    JTextField description = new JTextField(20);
+    JTextField price = new JTextField(20);
+    JTextField date = new JTextField(20);
+    JButton addSubmit = new JButton("Submit");
+
+
 
 
 
@@ -55,7 +67,7 @@ public class BudgetManagerApp extends JFrame implements ActionListener {
         this.setTitle("The Budget Manager App");
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         Container container = this.getContentPane();
-        container.setBackground(bColor);
+        container.setBackground(BCOLOR);
         this.setLayout(null);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -63,81 +75,188 @@ public class BudgetManagerApp extends JFrame implements ActionListener {
         this.addComponent();
         this.setVisible(true);
 
+
     }
 
     //add all the visible components onto the frame
     public void addComponent(){
-        this.add(addButtonSetUp());
-        this.add(statButtonSetUp());
-        this.add(loadButtonSetUp());
-        this.add(saveButtonSetUp());
+        this.add(getAdd());
+        this.add(getStats());
+        this.add(getLoad());
+        this.add(getSave());
         this.setResizable(false);
-        box.setBounds(10, 10, 120, 80);
+        box.setBounds(25, 10, 220, 80);
         box.setIcon(myIcon);
         this.add(box);
         this.add(contentBoxSetUp());
         this.add(contentBoxSetUp2());
+        this.add(getShowAll());
+        this.add(getEdit());
+        this.add(getOpening());
+        this.add(getRemaining());
+        this.add(getExpenseDel());
+        this.add(getExpenseDelB());
     }
 
     // setup for Add A New Entry button
-    public JButton addButtonSetUp(){
+    private JButton getAdd(){
         add.setBounds(40, 130,BUTTON_WIDTH, BUTTON_HEIGHT);
-        return basicSetUp(add);
+        basicSetUp(add);
+        return add;
 
     }
 
     // setup for Statisitics button
-    public JButton statButtonSetUp(){
+    private JButton getStats(){
         stat.setBounds(40, 150 + BUTTON_HEIGHT,BUTTON_WIDTH, BUTTON_HEIGHT);
-        return basicSetUp(stat);
+        basicSetUp(stat);
+        return stat;
     }
 
     // setup for expense display area
-    public JScrollPane contentBoxSetUp(){
+    private JScrollPane contentBoxSetUp(){
         scrollPane1.setBounds(280, 130,210, 260 );
         //setting background color for the scroll pane is finally working! but white is fine..
         //scrollPane1.getViewport().setBackground(buttonColor);
         scrollPane1.getViewport().add(displayArea1);
         displayArea1.setText("hello! welcome!");
-        displayArea1.setEnabled(false);
+        displayArea1.setEditable(false);
         return scrollPane1;
     }
 
     //setup for income display area
-    public JScrollPane contentBoxSetUp2(){
+    private JScrollPane contentBoxSetUp2(){
         scrollPane2.setBounds(510, 130, 210, 260);
         scrollPane2.add(displayArea2);
+        displayArea2.setEditable(false);
         return scrollPane2;
     }
 
+    private JTextField getExpenseDel(){
+        expenseDel.setBounds(280,400,50,30);
+        expenseDel.setToolTipText("Type the index to delete");
+        return expenseDel;
+    }
+    private JButton getExpenseDelB(){
+        expenseDelB.setBounds(340, 405, 50, 20);
+        basicSetUp(expenseDelB);
+        expenseDelB.setText("delete");
+        editBudget.setFont(new Font("HanziPen SC", Font.BOLD, 9));
+
+        expenseDelB.setMargin(new Insets(0, -17, 0, -17));
+
+
+        return expenseDelB;
+    }
+
+
+
     //setup for loadButton
-    public JButton loadButtonSetUp(){
+    private JButton getLoad(){
         load.setBounds(40, 170 + BUTTON_HEIGHT + BUTTON_HEIGHT, BUTTON_WIDTH_SMALL, BUTTON_HEIGHT);
-        return basicSetUp(load);
+        basicSetUp(load);
+        return load;
     }
 
     //setup for saveButton
-    public JButton saveButtonSetUp(){
+    private JButton getSave(){
         save.setBounds(60 + BUTTON_WIDTH_SMALL, 170 + BUTTON_HEIGHT + BUTTON_HEIGHT, BUTTON_WIDTH_SMALL, BUTTON_HEIGHT);
-        return basicSetUp(save);
+        basicSetUp(save);
+        return save;
     }
 
+    private JButton getShowAll(){
+        showAll.setBounds(40, 190+BUTTON_HEIGHT+ BUTTON_HEIGHT+BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
+        basicSetUp(showAll);
+        return showAll;
+
+    }
+
+    private JButton getEdit(){
+        editBudget.setBounds(510, 100, 40, 20);
+        basicSetUp(editBudget);
+        editBudget.setFont(new Font("HanziPen SC", Font.BOLD, 14));
+        editBudget.setMargin(new Insets(-3, -17, -3, -17));
+        return editBudget;
+    }
+
+    private JLabel getOpening(){
+        opening.setBounds(565, 100, 150, 20);
+        opening.setFont(new Font("HanziPen SC", Font.BOLD, 14));
+        opening.setForeground(new Color(252, 246, 237));
+        return opening;
+
+    }
+    private JLabel getRemaining(){
+        remaining.setBounds(565, 70, 150, 20);
+        remaining.setFont(new Font("HanziPen SC", Font.BOLD, 14));
+        remaining.setForeground(new Color(252, 246, 237));
+        return remaining;
+    }
+
+    private void addEntry(){
+        addDialogue = new JDialog(this);
+        Container content = addDialogue.getContentPane();
+        content.setBackground(BCOLOR);
+        addDialogue.setBounds(600, 300, 270, 400);
+        addDialogue.setLayout(new FlowLayout());
+        addDialogue.add(new JLabel("One-word description"));
+        addDialogue.add(description);
+        addDialogue.add(new JLabel("Price"));
+        addDialogue.add(price);
+        addDialogue.add(new JLabel("yyyy/mm/dd"));
+        addDialogue.add(date);
+        addSubmit.addActionListener(this);
+        addDialogue.add(addSubmit);
+
+        addDialogue.setVisible(true);
+    }
+
+    public void submitReceipt() {
+        String description = this.description.getText();
+        String price = this.price.getText();
+        String date = this.date.getText();
+
+        TimeStamp time = new TimeStamp(Integer.parseInt(date.substring(0, 4)),
+                Integer.parseInt(date.substring(5, 7)), Integer.parseInt(date.substring(8, 10)));
+        Entry r = new Entry(description, Double.parseDouble(price), time, Categories.FOOD);
+        this.expense.addEntry(r);
+        if (displayArea1.getText().equals("hello! welcome!")){
+            System.out.println("ok");
+            displayArea1.setText("");
+            displayArea1.append(r.entryToString());
+        } else{
+            displayArea1.append(r.entryToString());
+
+        }
+
+
+        this.description.setText("");
+        this.date.setText("");
+        this.price.setText("");
+
+    }
+
+
+
     //general setup for all buttons
-    private JButton basicSetUp(JButton stat) {
+    private void basicSetUp(JButton stat) {
         stat.setBorderPainted(false);
         stat.setOpaque(true);
         stat.setBackground(buttonColor);
         stat.addActionListener(this);
         stat.setFont(new Font("HanziPen SC", Font.BOLD, 18));
         stat.setForeground(new Color(145, 97, 55));
-        return stat;
     }
+
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == add){
-            System.out.println("button clicked");
+            addEntry();
+        } else if (e.getSource() == addSubmit) {
+            submitReceipt();
         }
 
     }

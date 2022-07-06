@@ -50,6 +50,9 @@ public class Entries {
     }
 
     public double calcTotal(){
+        if (this == null){
+            return 0;
+        }
         int total = 0;
         for (Entry entry : data){
             total += entry.getAmount();
