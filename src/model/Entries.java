@@ -39,15 +39,6 @@ public class Entries {
         this.budget = budget;
     }
 
-    public double calcTotalByCat(Categories type){
-        int total = 0;
-        for (Entry temp : data){
-            if (temp.getCat() == type) {
-                total += temp.getAmount();
-            }
-        }
-        return total;
-    }
 
     public double calcTotal(){
         if (this == null){

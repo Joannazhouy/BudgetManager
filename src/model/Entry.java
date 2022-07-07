@@ -5,15 +5,12 @@ public class Entry {
     private String name;
     private double amount;
     private TimeStamp date;
-    private Categories type;
 
-    public Entry(String name, double price, TimeStamp date, Categories type){
+    public Entry(String name, double price, TimeStamp date){
         this.name = name;
         this.amount = price;
         this.date = date;
-        this.type = type;
 
-        int ok = 0;
 
     }
 
@@ -30,12 +27,9 @@ public class Entry {
         return this.date;
     }
 
-    public Categories getCat(){
-        return this.type;
-    }
 
     public String entryToString(){
-        return name + " " + type.toString() + " " + "$" + Double.toString(amount) + " " + date.timeStampToString() + "\r\n";
+        return name + " " + " " + "$" + Double.toString(amount) + " " + date.timeStampToString() + "\r\n";
     }
 
 

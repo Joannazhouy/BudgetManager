@@ -1,4 +1,5 @@
 package ui;
+import jdk.nashorn.internal.scripts.JD;
 import model.Categories;
 import model.Entries;
 import model.Entry;
@@ -49,6 +50,11 @@ public class BudgetManagerApp extends JFrame implements ActionListener {
     JTextField price = new JTextField(20);
     JTextField date = new JTextField(20);
     JButton addSubmit = new JButton("Submit");
+    JButton confirmEntryType = new JButton("Confirm");
+    JComboBox<String> dropdown;
+    JDialog dropWindow;
+    JDialog incomeDialogue;
+    JButton addIncome = new JButton("submit");
 
 
 
@@ -127,7 +133,7 @@ public class BudgetManagerApp extends JFrame implements ActionListener {
     //setup for income display area
     private JScrollPane contentBoxSetUp2(){
         scrollPane2.setBounds(510, 130, 210, 260);
-        scrollPane2.add(displayArea2);
+        scrollPane2.getViewport().add(displayArea2);
         displayArea2.setEditable(false);
         return scrollPane2;
     }
@@ -194,47 +200,38 @@ public class BudgetManagerApp extends JFrame implements ActionListener {
         return remaining;
     }
 
-    private void addEntry(){
-        addDialogue = new JDialog(this);
-        Container content = addDialogue.getContentPane();
-        content.setBackground(BCOLOR);
-        addDialogue.setBounds(600, 300, 270, 400);
-        addDialogue.setLayout(new FlowLayout());
-        addDialogue.add(new JLabel("One-word description"));
-        addDialogue.add(description);
-        addDialogue.add(new JLabel("Price"));
-        addDialogue.add(price);
-        addDialogue.add(new JLabel("yyyy/mm/dd"));
-        addDialogue.add(date);
+    private void addExpenseEntry(){
+        incomeDialogue = new JDialog(this);
+        dialogueSetup(incomeDialogue);
         addSubmit.addActionListener(this);
-        addDialogue.add(addSubmit);
-
-        addDialogue.setVisible(true);
+        incomeDialogue.add(addSubmit);
     }
 
-    public void submitReceipt() {
+    public void submitReceipt(Entries entries, JTextArea area) {
         String description = this.description.getText();
         String price = this.price.getText();
         String date = this.date.getText();
 
         TimeStamp time = new TimeStamp(Integer.parseInt(date.substring(0, 4)),
                 Integer.parseInt(date.substring(5, 7)), Integer.parseInt(date.substring(8, 10)));
-        Entry r = new Entry(description, Double.parseDouble(price), time, Categories.FOOD);
-        this.expense.addEntry(r);
-        if (displayArea1.getText().equals("hello! welcome!")){
-            System.out.println("ok");
-            displayArea1.setText("");
-            displayArea1.append(r.entryToString());
+        Entry r = new Entry(description, Double.parseDouble(price), time);
+        entries.addEntry(r);
+        if (area.getText().equals("hello! welcome!")){
+            area.setText("");
+            area.append(r.entryToString());
         } else{
-            displayArea1.append(r.entryToString());
-
+            System.out.println("processing appending");
+            area.append(r.entryToString());
         }
-
 
         this.description.setText("");
         this.date.setText("");
         this.price.setText("");
 
+    }
+
+    private void submitExpense(){
+        submitReceipt(expense, displayArea1);
     }
 
 
@@ -249,14 +246,79 @@ public class BudgetManagerApp extends JFrame implements ActionListener {
         stat.setForeground(new Color(145, 97, 55));
     }
 
+    private void showDropdown(){
+        dropWindow = new JDialog();
+        Container content = dropWindow.getContentPane();
+        dropWindow.setBounds(600,300,270,200);
+        content.setBackground(buttonColor);
+        dropWindow.setLayout(new FlowLayout());
+        dropWindow.add(new JLabel("Choose an entry type"));
+        String[] options = {"Expense", "Income"};
+        dropdown = new JComboBox<>(options);
+        dropWindow.add(dropdown);
+        confirmEntryType.addActionListener(this);
+        dropWindow.add(confirmEntryType);
+        dropWindow.setVisible(true);
+
+
+
+    }
+
+    private void addEntry(){
+        int index = dropdown.getSelectedIndex();
+        dropWindow.setVisible(false);
+        if (index == 0){
+            dropWindow.setVisible(false);
+            addExpenseEntry();
+        } else {
+            addIncomeEntry();
+
+        }
+
+    }
+
+    private void addIncomeEntry(){
+        addDialogue = new JDialog(this);
+        dialogueSetup(addDialogue);
+        addIncome.addActionListener(this);
+        addDialogue.add(addIncome);
+
+    }
+
+    private void dialogueSetup(JDialog dialog){
+        Container content = dialog.getContentPane();
+        content.setBackground(BCOLOR);
+        dialog.setBounds(600, 300, 270, 400);
+        dialog.setLayout(new FlowLayout());
+        dialog.add(new JLabel("One-word description"));
+        dialog.add(description);
+        dialog.add(new JLabel("Price"));
+        dialog.add(price);
+        dialog.add(new JLabel("yyyy/mm/dd"));
+        dialog.add(date);
+        dialog.setVisible(true);
+
+    }
+
+    private void submitIncome(){
+        submitReceipt(income, displayArea2);
+    }
+
+
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == add){
-            addEntry();
+            showDropdown();
         } else if (e.getSource() == addSubmit) {
-            submitReceipt();
+            submitExpense();
+        } else if (e.getSource() == confirmEntryType) {
+            addEntry();
+
+        } else if (e.getSource() == addIncome){
+            System.out.println("submit");
+            submitIncome();
         }
 
     }
